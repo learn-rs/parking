@@ -156,6 +156,7 @@ impl Inner {
                 // Wait with a timeout, and if we spuriously wake up or otherwise wake up from a notification we just want to
                 // unconditionally set `state` back to `EMPTY`, either consuming a notification or un-flagging ourselves as parked
                 let (_m, _result) = self.cvar.wait_timeout(m, timeout).unwrap();
+                // return `true` if this call is the first to notify the parker, or `false` if the parker was already notified
                 match self.state.swap(EMPTY, SeqCst) {
                     NOTIFIED => true,  // got a notification
                     PARKED => false,   // no notification
